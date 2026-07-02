@@ -1,7 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <style>*{
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login Form</title>
+
+<style>
+*{
     margin:0;
     padding:0;
     box-sizing:border-box;
@@ -51,14 +56,14 @@ button{
 
 button:hover{
     background:#218838;
-}</style>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Form</title>
+}
+</style>
 </head>
+
 <body>
 
 <div class="container">
+
     <form id="loginForm">
 
         <h2>Login</h2>
@@ -80,6 +85,7 @@ button:hover{
         </button>
 
     </form>
+
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -87,53 +93,40 @@ button:hover{
 <script>
 
 const SUPABASE_URL = "https://zwczrfjffrfdwsvzlymn.supabase.co";
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp3Y3pyZmpmZnJmZHdzdnpseW1uIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI5ODg2ODEsImV4cCI6MjA5ODU2NDY4MX0.5OE7HUaNnoKWGY2CF533m921zOSVnckCMJmDTQ8LSmE";
+
+const SUPABASE_KEY = "YOUR_SUPABASE_ANON_KEY";
 
 const supabase = window.supabase.createClient(
     SUPABASE_URL,
     SUPABASE_KEY
 );
 
-document.getElementById("loginForm").addEventListener("submit", async function(e){
+document.getElementById("loginForm").addEventListener("submit", async (e) => {
 
     e.preventDefault();
 
-    const username = document.getElementById("username").value;
-    const password = document.getElementById("password").value;
+    const username = document.getElementById("username").value.trim();
+    const password = document.getElementById("password").value.trim();
 
-    const { error } = await supabase
+    const { data, error } = await supabase
         .from("users")
         .insert([
             {
-                username,
-                password
+                username: username,
+                password: password
             }
-        ]);
+        ])
+        .select();
 
-    if(error){
+    console.log("Data:", data);
+    console.log("Error:", error);
+
+    if (error) {
         alert(error.message);
-    }else{
-        alert("Data Saved Successfully");
+    } else {
+        alert("Data Saved Successfully ✅");
         document.getElementById("loginForm").reset();
     }
-  const { data, error } = await supabase
-  .from("users")
-  .insert([
-    {
-      username,
-      password
-    }
-  ])
-  .select();
-
-console.log("Data:", data);
-console.log("Error:", error);
-
-if (error) {
-  alert(error.message);
-} else {
-  alert("Data Saved Successfully");
-}
 
 });
 
