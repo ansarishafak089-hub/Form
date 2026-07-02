@@ -116,6 +116,24 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
         alert("Data Saved Successfully");
         document.getElementById("loginForm").reset();
     }
+  const { data, error } = await supabase
+  .from("users")
+  .insert([
+    {
+      username,
+      password
+    }
+  ])
+  .select();
+
+console.log("Data:", data);
+console.log("Error:", error);
+
+if (error) {
+  alert(error.message);
+} else {
+  alert("Data Saved Successfully");
+}
 
 });
 
