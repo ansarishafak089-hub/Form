@@ -88,49 +88,44 @@ button:hover{
 
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <script>
-
 const SUPABASE_URL = "https://zwczrfjffrfdwsvzlymn.supabase.co";
-
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp3Y3pyZmpmZnJmZHdzdnpseW1uIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI5ODg2ODEsImV4cCI6MjA5ODU2NDY4MX0.5OE7HUaNnoKWGY2CF533m921zOSVnckCMJmDTQ8LSmE";
 
-const supabase = window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
-);
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 document.getElementById("loginForm").addEventListener("submit", async (e) => {
-
     e.preventDefault();
 
     const username = document.getElementById("username").value.trim();
     const password = document.getElementById("password").value.trim();
 
+    if (!username || !password) {
+        alert("Please fill in both fields.");
+        return;
+    }
+
+    const submitBtn = e.target.querySelector("button");
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Saving...";
+
     const { data, error } = await supabase
         .from("users")
-        .insert([
-            {
-                username: username,
-                password: password
-            }
-        ])
+        .insert([{ username, password }])
         .select();
 
-    console.log("Data:", data);
-    console.log("Error:", error);
+    submitBtn.disabled = false;
+    submitBtn.textContent = "Submit";
 
     if (error) {
-        alert(error.message);
+        console.error("Supabase error:", error);
+        alert("Error: " + error.message);
     } else {
+        console.log("Saved:", data);
         alert("Data Saved Successfully ✅");
         document.getElementById("loginForm").reset();
     }
-
 });
-
 </script>
-
 </body>
 </html>
