@@ -3,129 +3,143 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Login Form</title>
+<title>Register User</title>
 
 <style>
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:Arial, sans-serif;
-}
-
 body{
+    font-family:Arial,sans-serif;
+    background:#111827;
     display:flex;
     justify-content:center;
     align-items:center;
     height:100vh;
-    background:#f2f2f2;
+    margin:0;
 }
 
 .container{
-    background:#fff;
-    padding:30px;
-    border-radius:10px;
-    box-shadow:0 0 15px rgba(0,0,0,0.2);
     width:350px;
-}
-
-h2{
-    text-align:center;
-    margin-bottom:20px;
+    background:#1f2937;
+    padding:30px;
+    border-radius:12px;
+    color:white;
 }
 
 input{
     width:100%;
     padding:12px;
     margin:10px 0;
-    border:1px solid #ccc;
-    border-radius:5px;
-    font-size:16px;
+    border:none;
+    border-radius:8px;
+    background:#374151;
+    color:white;
+    box-sizing:border-box;
 }
 
 button{
     width:100%;
     padding:12px;
-    background:#28a745;
+    background:#2563eb;
     color:white;
     border:none;
-    border-radius:5px;
-    font-size:16px;
+    border-radius:8px;
     cursor:pointer;
 }
 
 button:hover{
-    background:#218838;
+    background:#1d4ed8;
+}
+
+#status{
+    margin-top:15px;
 }
 </style>
-</head>
 
+</head>
 <body>
 
 <div class="container">
 
-    <form id="loginForm">
+<h2>Registration Form</h2>
 
-        <h2>Login</h2>
+<form id="userForm">
 
-        <input
-            type="text"
-            id="username"
-            placeholder="Enter Username"
-            required>
+<input
+type="text"
+id="name"
+placeholder="Full Name"
+required>
 
-        <input
-            type="password"
-            id="password"
-            placeholder="Enter Password"
-            required>
+<input
+type="text"
+id="username"
+placeholder="Username"
+required>
 
-        <button type="submit">
-            Submit
-        </button>
+<button type="submit">
+Submit
+</button>
 
-    </form>
+</form>
+
+<p id="status"></p>
 
 </div>
 
 <script>
+
 const SUPABASE_URL = "https://zwczrfjffrfdwsvzlymn.supabase.co";
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp3Y3pyZmpmZnJmZHdzdnpseW1uIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI5ODg2ODEsImV4cCI6MjA5ODU2NDY4MX0.5OE7HUaNnoKWGY2CF533m921zOSVnckCMJmDTQ8LSmE";
 
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp3Y3pyZmpmZnJmZHdzdnpseW1uIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI5ODg2ODEsImV4cCI6MjA5ODU2NDY4MX0.5OE7HUaNnoKWGY2CF533m921zOSVnckCMJmDTQ8LSmE";
 
-document.getElementById("loginForm").addEventListener("submit", async (e) => {
-    e.preventDefault();
+document
+.getElementById("userForm")
+.addEventListener("submit", async (e)=>{
 
-    const username = document.getElementById("username").value.trim();
-    const password = document.getElementById("password").value.trim();
+e.preventDefault();
 
-    if (!username || !password) {
-        alert("Please fill in both fields.");
-        return;
-    }
+const name = document.getElementById("name").value.trim();
 
-    const submitBtn = e.target.querySelector("button");
-    submitBtn.disabled = true;
-    submitBtn.textContent = "Saving...";
+const username = document.getElementById("username").value.trim();
 
-    const { data, error } = await supabase
-        .from("users")
-        .insert([{ username, password }])
-        .select();
-
-    submitBtn.disabled = false;
-    submitBtn.textContent = "Submit";
-
-    if (error) {
-        console.error("Supabase error:", error);
-        alert("Error: " + error.message);
-    } else {
-        console.log("Saved:", data);
-        alert("Data Saved Successfully ✅");
-        document.getElementById("loginForm").reset();
-    }
+const res = await fetch(
+`${SUPABASE_URL}/rest/v1/users`,
+{
+method:"POST",
+headers:{
+"apikey":SUPABASE_ANON_KEY,
+"Authorization":"Bearer "+SUPABASE_ANON_KEY,
+"Content-Type":"application/json",
+"Prefer":"return=representation"
+},
+body:JSON.stringify({
+name:name,
+username:username
+})
 });
+
+const data = await res.json();
+
+if(res.ok){
+
+document.getElementById("status").innerHTML =
+"✅ User Added Successfully";
+
+document.getElementById("userForm").reset();
+
+console.log(data);
+
+}else{
+
+document.getElementById("status").innerHTML =
+"❌ "+JSON.stringify(data);
+
+console.log(data);
+
+}
+
+});
+
 </script>
+
 </body>
 </html>
